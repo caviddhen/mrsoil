@@ -20,7 +20,8 @@ calcCarbonManure <- function() {
                                                  aggregate = FALSE)[, , "stubble_grazing"][, , "c"])
   manureInput        <- (manureApplication + manureGrazing)
   cropland           <- dimSums(calcOutput("Croparea", cellular = TRUE, aggregate = FALSE), dim = 3)
-  manureInput        <- manureInput / cropland
+  cyears <- intersect(getYears(manureInput), getYears(cropland))
+  manureInput        <- manureInput[, cyears, ] / cropland[, cyears, ]
   manureInput        <- toolConditionalReplace(manureInput, conditions = c("is.na()", "<0"), replaceby = 0)
   manureInput        <- toolConditionalReplace(manureInput, conditions = c("is.infinite()"), replaceby = 0)
   # Cut high input values at 10 tC/ha
